@@ -1,67 +1,56 @@
-const connectDB = require('./config/connectDB.js');
-const signup = require('./controllers/authController.js');
-const authRoutes=require('./routes/authRoutes.js')
+const express=require('express');
+const cookieParser=require('cookie-parser')
+const bodyParser=require('body-parser')
+const connectDB=require('./config/connectDB')
+const cors=require('cors')
+const authRoutes=require('./routes/authRoutes')
+const userRoutes=require('./routes/userRoutes')
+const authenticated=require('./middlewares/authenticated')
+const User=require('./models/userModal')
 
-const allowedOrigins = ["http://localhost:5173"];
+const app=express();
+require('dotenv').config();
 
-(async () => {
-  try {
-    const db = await connectDB();
-    console.log("Connected to MongoDB");
+connectDB();
 
-    const server = Bun.serve({
-      port:  8000,
-      async fetch(request) {
-        const origin = request.headers.get("Origin");
+const port=process.env.PORT;
 
-        const headers = {
-          "Access-Control-Allow-Origin": allowedOrigins.includes(origin) ? origin : "null",
-          "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-          "Access-Control-Allow-Headers": "Content-Type, Authorization",
-        };
+app.use(express.json());
+app.use(bodyParser.json());
+app.use(cookieParser())
+app.use(
+  cors({
+    origin: [
+      "https://snip-bucket.vercel.app",
+      `http://localhost:5173`,
+    ],
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
+  })
+);
 
-        if (request.method === "OPTIONS") {
-          return new Response(null, { status: 204, headers });
-        }
+app.get('/',(req,res)=>{
+    res.send('This is TaskTracker API')
+})
 
-        const url = new URL(request.url);
-
-        if (url.pathname === "/api/create-task" && request.method === "POST") {
-          try {
-            const tasksCollection = db.collection("tasks");
-            const data = await request.json();
-            const result = await tasksCollection.insertOne(data);
-            const responsePayload = { success: true };
-
-            return new Response(JSON.stringify(responsePayload), {
-              status: 200,
-              headers: { ...headers, "Content-Type": "application/json" },
-            });
-          } catch (error) {
-            return new Response(JSON.stringify({ error: error.message }), {
-              status: 500,
-              headers: { ...headers, "Content-Type": "application/json" },
-            });
-          }
-        }
-
-        if (url.pathname.startsWith("/auth")) {
-          return await authRoutes(request, headers);
-        }
-
-        if (url.pathname === "/") {
-          return new Response("Welcome to Bun!", { headers });
-        }
-
-        return new Response(JSON.stringify({ error: "Not Found" }), {
-          status: 404,
-          headers: { ...headers, "Content-Type": "application/json" },
-        });
-      },
-    });
-
-    console.log(`Listening on http://localhost:${server.port}`);
-  } catch (error) {
-    console.error("Failed to connect to MongoDB:", error);
+app.get('/protected', authenticated, async (req, res) => {
+  const user = await User.findById(req.user._id).select('-password'); // Exclude sensitive fields
+  if (!user) {
+    return res.status(404).json({ success: false, message: 'User not found' });
   }
-})();
+
+  res.status(200).json({
+    success: true,
+    message: 'User authenticated',
+    user,
+  });
+});
+
+app.use("/auth", authRoutes);
+app.use("/api", userRoutes);
+
+
+app.listen(port, () => {
+    console.log(`Server running at http://localhost:${port}`);
+});  

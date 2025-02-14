@@ -1,30 +1,20 @@
-const { MongoClient } = require("mongodb");
-
-
-let client; // Store the client globally
+const mongoose = require('mongoose');
 
 const connectDB = async () => {
   try {
-    if (client) {
-      console.log("Using existing database connection");
-      return client.db(); // Return existing connection
-    }
-
     const uri = process.env.MONGO_URI;
 
     if (!uri) {
-      throw new Error("Please define your MongoDB connection string");
+      console.error('Error: MONGO_URI not defined in .env file');
+      process.exit(1);
     }
 
-    client = new MongoClient(uri);
+    await mongoose.connect(uri);
 
-    await client.connect();
-    console.log("Database connected successfully");
-
-    return client.db();
+    console.log('Database connected successfully');
   } catch (error) {
-    console.error("Database connection error:", error);
-    process.exit(1); // Exit process on connection failure
+    console.error('Error connecting to the database:', error.message);
+    process.exit(1);
   }
 };
 

@@ -1,23 +1,24 @@
 {
   "name": "tasktracker-api",
+  "version": "1.0.0",
   "main": "index.js",
-  
-  "devDependencies": {
-    "@types/bun": "latest"
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon index.js"
   },
-  "peerDependencies": {
-    "typescript": "^5.0.0"
-  },
+  "author": "Ayush Deb",
+  "license": "ISC",
+  "description": "",
   "dependencies": {
     "bcrypt": "^5.1.1",
-    "bun-vercel": "^1.0.0-alpha.5",
+    "body-parser": "^1.20.3",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
-    "env": "^0.0.2",
     "express": "^4.21.2",
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.13.0",
-    "mongoose": "^8.10.0"
+    "mongoose": "^8.10.0",
+    "nodemon": "^3.1.9"
   }
 }
