@@ -22,6 +22,7 @@ app.use(
   cors({
     origin: [
       "https://snip-bucket.vercel.app",
+      "https://task-tracker-ivory-psi.vercel.app",
       `http://localhost:5173`,
     ],
     methods: ["GET", "POST", "PUT", "DELETE"],

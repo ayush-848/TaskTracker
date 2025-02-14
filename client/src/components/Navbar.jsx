@@ -18,10 +18,10 @@ const Navbar = () => {
         {/* Desktop Menu */}
         <div className="hidden md:flex space-x-6">
           <a
-            href="#"
+            href="/user"
             className="text-slate-300 hover:text-indigo-400 transition-colors"
           >
-            Home
+            Dashboard
           </a>
           <a
             href="#features"
@@ -30,10 +30,10 @@ const Navbar = () => {
             Features
           </a>
           <a
-            href="#pricing"
+            href="/signup"
             className="text-slate-300 hover:text-indigo-400 transition-colors"
           >
-            Pricing
+            Sign Up
           </a>
           <a
             href="#contact"

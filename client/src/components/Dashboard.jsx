@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
   faClipboardList,
@@ -6,9 +6,17 @@ import {
   faSpinner,
   faExclamationTriangle
 } from '@fortawesome/free-solid-svg-icons';
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
+import { AuthContext } from '../context/AuthContext'; // adjust the path as needed
 
 const Dashboard = () => {
+  const { user } = useContext(AuthContext);
+
+  // If there is no logged-in user, redirect to login
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+
   const stats = [
     { 
       title: 'Total Tasks',

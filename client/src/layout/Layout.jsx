@@ -27,8 +27,8 @@ const Layout = () => {
         {/* Branding */}
         <div className="flex items-center h-16 px-6 border-b border-gray-100 dark:border-gray-800">
         <span className="text-xl font-bold text-gray-900 dark:text-white" id="logo">
-  <img src={logo} alt="Logo" className="inline-block h-8 w-8" />
-  <span className="text-indigo-600 dark:text-indigo-400">&nbsp;Task</span>Tracker
+  <a href="/"><img src={logo} alt="Logo" className="inline-block h-8 w-8" />
+  <span className="text-indigo-600 dark:text-indigo-400">&nbsp;Task</span>Tracker</a>
 </span>
           <button
             className="ml-auto lg:hidden text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
