@@ -1,17 +1,19 @@
 import React, { useState } from "react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
+import logo from '../assets/logo.svg'
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const toggleMenu = () => setIsOpen(!isOpen);
 
   return (
-    <nav className="absolute top-0 left-0 z-50 w-full bg-transparent backdrop-blur-xs" style={{ fontFamily: "'Open Sans', sans-serif" }}>
+    <nav className="absolute top-0 left-0 z-50 w-full bg-slate-900" style={{ fontFamily: "'Geist Mono', sans-serif" }}>
       <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
         {/* Logo */}
-        <a href="#" className="text-2xl font-bold text-indigo-400">
-          TaskTracker
-        </a>
+        <span className=" lg:text-xl md:text-base sm:text-xs font-bold text-gray-900 dark:text-white" id="logo">
+  <img src={logo} alt="Logo" className="inline-block h-8 w-8" />
+  <span className="text-indigo-600 dark:text-indigo-400">&nbsp;Task</span>Tracker
+</span>
 
         {/* Desktop Menu */}
         <div className="hidden md:flex space-x-6">
