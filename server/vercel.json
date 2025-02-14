@@ -1,0 +1,15 @@
+{
+    "version": 3,
+    "functions": {
+      "index.js": {
+        "runtime": "bun"
+      }
+    },
+    "routes": [
+      {
+        "src": "/(.*)",
+        "dest": "/index.js"
+      }
+    ]
+  }
+  
