@@ -8,7 +8,7 @@ const Layout = lazy(() => import('./layout/Layout'));
 const AddTask = lazy(() => import('./components/AddTask'));
 const SignUp = lazy(() => import('./pages/SignUp'));
 const Dashboard = lazy(() => import('./components/Dashboard'));
-const Home = lazy(() => import('./pages/Home'));
+const Home =  import('./pages/Home');
 
 const App = () => {
   return (
