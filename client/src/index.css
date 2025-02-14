@@ -1,0 +1,11 @@
+@import url('https://fonts.googleapis.com/css2?family=Geist+Mono:wght@100..900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+@import "tailwindcss";
+
+html,
+body {
+  transition: background-color 0.5s ease, color 0.5s ease;
+}
+
+
+
+  @custom-variant dark (&:where(.dark, .dark *));
