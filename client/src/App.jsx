@@ -1,28 +1,30 @@
 // App.js
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Layout from './layout/Layout';
-import AddTask from './components/AddTask';
-import SignUp from './pages/SignUp';
-import './App.css'
-import Dashboard from './components/Dashboard';
-import Home from './pages/Home';
+import './App.css';
 
+// Lazy load components
+const Layout = lazy(() => import('./layout/Layout'));
+const AddTask = lazy(() => import('./components/AddTask'));
+const SignUp = lazy(() => import('./pages/SignUp'));
+const Dashboard = lazy(() => import('./components/Dashboard'));
+const Home = lazy(() => import('./pages/Home'));
 
 const App = () => {
   return (
     <Router>
-      <Routes>
-        {/* All routes nested in Layout share the same sidebar/header */}
-        <Route path="/" element={<Home />}/>
-        <Route path="/user" element={<Layout />}>
-          <Route index element={<Dashboard />} />
-          <Route path="add-task" element={<AddTask />} />
-          <Route path="*" element={<>Page Does not exists</>} />
-          {/* Add additional nested routes as needed */}
-        </Route>
-        <Route path="/signup" element={<SignUp />}/>
-      </Routes>
+      {/* Wrap your routes with Suspense to show a fallback while loading */}
+      <Suspense fallback={<div>Loading...</div>}>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/user" element={<Layout />}>
+            <Route index element={<Dashboard />} />
+            <Route path="add-task" element={<AddTask />} />
+            <Route path="*" element={<>Page Does not exist</>} />
+          </Route>
+          <Route path="/signup" element={<SignUp />} />
+        </Routes>
+      </Suspense>
     </Router>
   );
 };
