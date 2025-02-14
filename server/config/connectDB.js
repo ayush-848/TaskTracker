@@ -10,7 +10,7 @@ const connectDB = async () => {
       return client.db(); // Return existing connection
     }
 
-    const uri = Bun.env.MONGO_URI;
+    const uri = process.env.MONGO_URI;
 
     if (!uri) {
       throw new Error("Please define your MongoDB connection string");
