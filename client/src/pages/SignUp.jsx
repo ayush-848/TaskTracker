@@ -1,7 +1,9 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useSearchParams } from "react-router-dom";
-import axios from "axios"; // ensure axios is installed/imported
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { handleError, handleSuccess } from "../utils/messageHandler";
 
 const InputField = ({ register, name, type, placeholder, icon }) => (
   <div className="relative flex items-center mt-4">
@@ -18,25 +20,44 @@ const InputField = ({ register, name, type, placeholder, icon }) => (
 const SignUp = () => {
   const { register, handleSubmit, setValue } = useForm();
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const emailFromQuery = searchParams.get("email") || "";
+  const [selectedFile, setSelectedFile] = useState(null);
 
-  // Pre-fill the email field after the component mounts
   useEffect(() => {
     if (emailFromQuery) {
       setValue("email", emailFromQuery);
     }
   }, [emailFromQuery, setValue]);
 
-  const onSubmit = async (data) => {
+  const onSubmit = async (formData) => {
     try {
+      const data = new FormData();
+      data.append("username", formData.username);
+      data.append("email", formData.email);
+      data.append("password", formData.password);
+      data.append("confirmPassword", formData.confirmPassword);
+
+      if (formData.profilePhoto?.[0]) {
+        data.append("profilePhoto", formData.profilePhoto[0]);
+      }
+
       const response = await axios.post(
-        `${import.meta.env.VITE_API_URL}/register`,
-        data,
-        { headers: { "Content-Type": "application/json" } }
+        `${import.meta.env.VITE_API_URL}/auth/register`,
+        data
       );
-      console.log("Registration successful:", response.data);
+      
+      handleSuccess("Account created successfully!");
+      setTimeout(() => {
+        navigate('/login');
+      }, 1500);
     } catch (error) {
       console.error("Error during registration:", error);
+      handleError(
+        error.response?.data?.message ||
+        error.message ||
+        "Something went wrong during registration."
+      );
     }
   };
 
@@ -152,8 +173,16 @@ const SignUp = () => {
               d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
             />
           </svg>
-          <span className="ml-2">Profile Photo</span>
-          <input {...register("profilePhoto")} type="file" className="hidden" />
+          <span className="ml-2">
+            {selectedFile ? selectedFile.name : "Profile Photo"}
+          </span>
+          <input
+            {...register("profilePhoto")}
+            type="file"
+            className="hidden"
+            accept="image/*"
+            onChange={(e) => setSelectedFile(e.target.files[0])}
+          />
         </label>
 
         <button
@@ -165,7 +194,7 @@ const SignUp = () => {
 
         <p className="text-center text-sm">
           Already have an account?{" "}
-          <a href="#" className="text-blue-500 hover:underline">
+          <a href="/login" className="text-blue-500 hover:underline">
             Log in
           </a>
         </p>

@@ -21,11 +21,10 @@ app.use(cookieParser())
 app.use(
   cors({
     origin: [
-      "https://snip-bucket.vercel.app",
       "https://task-tracker-ivory-psi.vercel.app",
       `http://localhost:5173`,
     ],
-    methods: ["GET", "POST", "PUT", "DELETE"],
+    methods: ["GET", "POST", "PUT", "DELETE","PATCH"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
   })
@@ -36,7 +35,7 @@ app.get('/',(req,res)=>{
 })
 
 app.get('/protected', authenticated, async (req, res) => {
-  const user = await User.findById(req.user._id).select('-password'); // Exclude sensitive fields
+  const user = await User.findById(req.user._id).select('-password');
   if (!user) {
     return res.status(404).json({ success: false, message: 'User not found' });
   }

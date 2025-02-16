@@ -32,7 +32,6 @@ const Login = () => {
           withCredentials: true,
         }
       );
-      console.log("Login successful:", response.data);
       handleSuccess("Login successful");
         setTimeout(() => {
           navigate('/user');

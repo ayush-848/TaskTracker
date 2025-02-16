@@ -17,26 +17,51 @@ const checkFormat = (username, email, password) => {
 
 const signup = async (req, res) => {
   try {
-    const { username, email, password } = req.body;
+    const { username, email, password, confirmPassword } = req.body;
+    // Validate required fields and format (throw an error if invalid)
     checkFormat(username, email, password);
 
-    // Check if the user already exists based on email or username
+    // Check if the user already exists by email or username
     const existingEmail = await User.findOne({ email });
     const existingUsername = await User.findOne({ username });
     if (existingEmail || existingUsername) {
       return res.status(400).json({
         success: false,
-        error: true,
         message: "User already exists",
       });
     }
 
+    // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = new User({
       username,
       email,
       password: hashedPassword,
     });
+
+    // If a profile photo was uploaded, upload it to Imgur
+    if (req.file) {
+      // Convert the file buffer to a Base64 string
+      const imageBase64 = req.file.buffer.toString("base64");
+
+      // Upload the image to Imgur
+      const imgurResponse = await axios.post(
+        "https://api.imgur.com/3/image",
+        {
+          image: imageBase64,
+          type: "base64",
+        },
+        {
+          headers: {
+            Authorization: `Client-ID ${process.env.IMGUR_CLIENT_ID}`,
+          },
+        }
+      );
+
+      // Save the returned image URL in the user's profilePhoto field
+      user.profilePhoto = imgurResponse.data.data.link;
+    }
+
     await user.save();
 
     return res.status(201).json({
@@ -55,12 +80,10 @@ const signup = async (req, res) => {
 
     return res.status(500).json({
       success: false,
-      error: true,
       message: errorMessage,
     });
   }
 };
-
 
 const login = async (req, res) => {
   try {

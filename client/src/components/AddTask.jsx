@@ -1,35 +1,70 @@
-// components/AddTask.jsx
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import BreadCrumbs from './BreadCrumbs'
-import axios from 'axios'
+import BreadCrumbs from './BreadCrumbs';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+
 
 const AddTask = () => {
-  const { register, handleSubmit, formState: { errors } } = useForm();
+  // Set default values for category and priority
+  const { register, handleSubmit, formState: { errors } } = useForm({
+    defaultValues: {
+      category: 'personal',
+      priority: 'low',
+    },
+  });
   const [dueDate, setDueDate] = useState(null);
+  // subtasks can be empty; we store them as an array of objects
   const [subtasks, setSubtasks] = useState([{ text: '' }]);
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
+  const navigate=useNavigate()
 
-  const onSubmit = async(data) => {
-    const allSubtasks= subtasks.filter(subtask => subtask.text.trim() !== '')
-    const payload={
-      ...data,
-      dueDate,
-      allSubtasks
-    }
+  const onSubmit = async (data) => {
+    const preparedSubtasks = subtasks
+      .filter(subtask => subtask.text.trim() !== '')
+      .map(subtask => ({ text: subtask.text, completed: false }));
 
+    const payload = {
+      taskName: data.taskName,
+      description: data.description || "",
+      dueDate: dueDate ? dueDate.toISOString() : null,
+      priority: data.priority || "low",
+      category: data.category || "personal",
+      status: 'pending',
+      subtasks: preparedSubtasks,
+    };
+
+    setLoading(true);
+    setMessage("");
+    
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_API_URL}/api/create-task`,
         payload,
-        {
-          headers: { "Content-Type": "application/json" },
-        }
+        { 
+          withCredentials: true, // This is crucial for cookies
+          headers: {
+            'Content-Type': 'application/json',
+          },
+         }
       );
-      console.log("Task created:", response.data);
+      
+      setMessage("Task created successfully!");
+      if(response.data.success){
+        setTimeout(() => {
+          navigate('/user');
+        }, 1500);
+      }
+      setDueDate(null);
+      setSubtasks([{ text: '' }]);
     } catch (error) {
       console.error("Error creating task:", error);
+      setMessage(error.response?.data?.message || "Error creating task. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -38,20 +73,19 @@ const AddTask = () => {
   };
 
   const removeSubtask = (index) => {
-    const newSubtasks = subtasks.filter((_, i) => i !== index);
-    setSubtasks(newSubtasks);
+    setSubtasks(subtasks.filter((_, i) => i !== index));
   };
 
   return (
     <div className="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow-sm border border-gray-300">
-      <BreadCrumbs/>
+      <BreadCrumbs />
       <h2 className="text-2xl font-bold text-gray-800 mb-6">Add New Task</h2>
       
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         {/* Task Name */}
         <div>
           <label className="block text-sm font-medium text-gray-800 mb-1">
-            Task Name <span className='text-red-600'>*</span>
+            Task Name <span className="text-red-600">*</span>
           </label>
           <input
             {...register('taskName', { required: true })}
@@ -64,7 +98,7 @@ const AddTask = () => {
           )}
         </div>
 
-        {/* Description */}
+        {/* Description (optional) */}
         <div>
           <label className="block text-sm font-medium text-gray-800 mb-1">
             Description
@@ -73,16 +107,17 @@ const AddTask = () => {
             {...register('description')}
             rows="3"
             className="w-full px-4 py-2 rounded-lg border border-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            placeholder="Enter task description (optional)"
           />
         </div>
 
         {/* Due Date */}
         <div>
           <label className="block text-sm font-medium text-gray-800 mb-1">
-            Due Date <span className='text-red-600'>*</span>
+            Due Date <span className="text-red-600">*</span>
           </label>
           <DatePicker
-          required
+            required
             selected={dueDate}
             onChange={(date) => setDueDate(date)}
             minDate={new Date()}
@@ -92,10 +127,10 @@ const AddTask = () => {
           />
         </div>
 
-        {/* Priority */}
+        {/* Priority (default low) */}
         <div>
           <label className="block text-sm font-medium text-gray-800 mb-1">
-            Priority   &nbsp;<span className='text-gray-400'>(default low)</span>
+            Priority <span className="text-gray-400">(default low)</span>
           </label>
           <select
             {...register('priority')}
@@ -107,10 +142,26 @@ const AddTask = () => {
           </select>
         </div>
 
-        {/* Subtasks */}
+        {/* Category (default personal) */}
+        <div>
+          <label className="block text-sm font-medium text-gray-800 mb-1">
+            Category <span className="text-gray-400">(default personal)</span>
+          </label>
+          <select
+            {...register('category')}
+            className="w-full px-4 py-2 rounded-lg border border-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          >
+            <option value="personal">Personal</option>
+            <option value="work">Work</option>
+            <option value="shopping">Shopping</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+
+        {/* Subtasks (optional) */}
         <div>
           <label className="block text-sm font-medium text-gray-800 mb-2">
-            Subtasks
+            Subtasks (optional)
           </label>
           {subtasks.map((subtask, index) => (
             <div key={index} className="flex gap-2 mb-2">
@@ -144,27 +195,19 @@ const AddTask = () => {
           </button>
         </div>
 
-        {/* Category */}
-        <div>
-          <label className="block text-sm font-medium text-gray-800 mb-1">
-            Category
-          </label>
-          <select
-            {...register('category')}
-            className="w-full px-4 py-2 rounded-lg border border-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          >
-            <option value="work">Work</option>
-            <option value="personal">Personal</option>
-            <option value="shopping">Shopping</option>
-            <option value="other">Other</option>
-          </select>
-        </div>
+        {/* Message */}
+        {message && (
+          <div className="text-center text-sm text-green-600">
+            {message}
+          </div>
+        )}
 
         <button
           type="submit"
-          className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors"
+          disabled={loading}
+          className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
         >
-          Create Task
+          {loading ? "Creating Task..." : "Create Task"}
         </button>
       </form>
     </div>

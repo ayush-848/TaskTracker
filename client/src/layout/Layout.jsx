@@ -1,16 +1,26 @@
 // Layout.jsx
-import React, { useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Outlet, Link } from 'react-router-dom';
-import { Home, Mail, Bell, User, LogOut } from 'lucide-react';
+import { Home, Mail, Bell, User, LogOut,Check } from 'lucide-react';
 import ThemeToggle from '../components/ThemeToggle';
 import logo from '../assets/logo.svg'
+import { AuthContext } from '../context/AuthContext';
 
 const Layout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [totalCompleted,setTotalCompleted]=useState(0)
+  const {tasks}=useContext(AuthContext)
+  useEffect(()=>{
+    if(tasks){
+       const completedTasks=tasks.filter(task=>task.status==='completed')
+       setTotalCompleted(completedTasks.length)
+    }
+
+  },[tasks])
 
   const navItems = [
     { name: 'Dashboard', path: '/user', icon: Home },
-    { name: 'Inbox', path: '/user/inbox', icon: Mail, badge: 5 },
+    { name: 'Completed', path: '/user/completed-tasks', icon: Check, badge: totalCompleted },
     { name: 'Alerts', path: '/user/alerts', icon: Bell, badge: 3 },
     { name: 'Profile', path: '/user/profile', icon: User },
     { name: 'Sign Out', path: '/logout', icon: LogOut },
@@ -18,11 +28,11 @@ const Layout = () => {
   
 
   return (
-    <div className="min-h-screen flex bg-white dark:bg-gray-950">
+    <div className="min-h-screen flex bg-gray-300 dark:bg-gray-950">
       {/* Vertical Navigation */}
       <div className={`fixed inset-y-0 left-0 z-40 w-64 transform transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] 
         ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} 
-        lg:translate-x-0 lg:shadow-sm shadow-xl bg-white dark:bg-gray-900 border-r border-gray-100 dark:border-gray-800`}>
+        lg:translate-x-0 lg:shadow-sm shadow-xl bg-gray-100 dark:bg-gray-900 border-r border-gray-100 dark:border-gray-800`}>
         
         {/* Branding */}
         <div className="flex items-center h-16 px-6 border-b border-gray-100 dark:border-gray-800">
@@ -55,7 +65,7 @@ const Layout = () => {
                   <span className="text-sm font-medium">{item.name}</span>
                   {item.badge && (
                     <span className="ml-auto px-2 text-xs font-medium rounded-full 
-                      bg-indigo-100 text-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-200">
+                      bg-indigo-200 text-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-200">
                       {item.badge}
                     </span>
                   )}
@@ -69,7 +79,7 @@ const Layout = () => {
       {/* Main Content */}
       <div className="flex flex-col flex-1 lg:pl-64">
         {/* Header */}
-        <header className="sticky top-0 z-30 flex items-center h-16 px-6 bg-white/80 dark:bg-gray-950/80 
+        <header className="sticky top-0 z-30 flex items-center h-16 px-6 bg-gray-100 dark:bg-gray-900 
           backdrop-blur-sm border-b border-gray-100 dark:border-gray-800">
           <button
             className="mr-2 lg:hidden text-gray-500 hover:text-gray-700 dark:hover:text-gray-200"

@@ -10,10 +10,11 @@ import Login from './pages/Login';
 import { AuthProvider } from './context/AuthContext'; // adjust path if needed
 import './App.css';
 import { ToastContainer } from 'react-toastify';
+import UserTaskDetails from './pages/UserTaskDetails';
+
 
 const App = () => {
   return (
-    <AuthProvider>
       <Router>
         <ToastContainer/>
         <Routes>
@@ -26,11 +27,11 @@ const App = () => {
           <Route path="/user" element={<Layout />}>
             <Route index element={<Dashboard />} />
             <Route path="add-task" element={<AddTask />} />
+          <Route path="tasks/:id" element={<UserTaskDetails/>}/>
             <Route path="*" element={<>Page Does not exist</>} />
           </Route>
         </Routes>
       </Router>
-    </AuthProvider>
   );
 };
 

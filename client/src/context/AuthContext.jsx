@@ -1,14 +1,17 @@
+// src/context/AuthContext.jsx
 import React, { createContext, useState, useEffect } from 'react';
 import axios from 'axios';
 import { handleError, handleSuccess } from '../utils/messageHandler';
-import LogoutAnimation from '../assets/logoutAnimation'
 
 const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
-const [user, setUser] = useState(null);
+  const [user, setUser] = useState(null);
+  const [tasks, setTasks] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [logoutLoading, setLogoutLoading] = useState(false);
 
+  // Re-fetch the user on mount (e.g. on page refresh) using the cookie
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -22,19 +25,47 @@ const [user, setUser] = useState(null);
             },
           }
         );
-
         if (response.data.success) {
-          setUser(response.data.user); // Include user data (with credits) in the state
+          setUser(response.data.user);
+        } else {
+          setUser(null);
         }
       } catch (error) {
-        console.error('Error loading user:', error.response?.data?.message || error.message);
+        console.error(
+          'Error loading user:',
+          error.response?.data?.message || error.message
+        );
         setUser(null);
       } finally {
+        setLoading(false);
       }
     };
 
     fetchUser();
   }, []);
+
+  // Fetch tasks whenever the user changes
+  useEffect(() => {
+    if (!user) return; // Only fetch tasks if the user exists
+
+    const fetchTasks = async () => {
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_API_URL}/api/tasks/user`,
+          {
+            withCredentials: true,
+          }
+        );
+        // Assume the API returns an object like { success: true, tasks: [...] }
+        setTasks(response.data.tasks);
+      } catch (err) {
+        console.log('Error fetching tasks');
+        setTasks(null);
+      }
+    };
+
+    fetchTasks();
+  }, [user]);
 
   const login = async (email, password) => {
     try {
@@ -49,9 +80,7 @@ const [user, setUser] = useState(null);
           },
         }
       );
-
       const { success, message, user } = response.data;
-
       if (success) {
         setUser(user);
         handleSuccess(message);
@@ -62,7 +91,9 @@ const [user, setUser] = useState(null);
       }
     } catch (error) {
       const errorMessage =
-        error.response?.data?.message || error.message || 'An unexpected error occurred.';
+        error.response?.data?.message ||
+        error.message ||
+        'An unexpected error occurred.';
       handleError(errorMessage);
       return false;
     }
@@ -70,16 +101,17 @@ const [user, setUser] = useState(null);
 
   const signUp = async (username, email, password) => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/register`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username, email, password }),
-      });
-
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/auth/register`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ username, email, password }),
+        }
+      );
       const data = await response.json();
-
       if (response.ok) {
         handleSuccess('Account created successfully! Redirecting...');
         return true;
@@ -93,10 +125,8 @@ const [user, setUser] = useState(null);
     }
   };
 
-
   const logout = async () => {
     if (!user) return;
-  
     setLogoutLoading(true);
     try {
       await axios.post(
@@ -104,25 +134,23 @@ const [user, setUser] = useState(null);
         {},
         { withCredentials: true }
       );
-  
-      setUser(null); // Clear user state
-  
-      await new Promise((resolve) => setTimeout(resolve, 2000)); // Optional delay for smooth transition
-  
-      window.location.href = '/'; // Redirect to the home page
+      setUser(null);
+      // Optional: delay for a smooth transition
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      window.location.href = '/';
     } catch (error) {
       const errorMessage =
-        error.response?.data?.message || error.message || 'Error during logout.';
+        error.response?.data?.message ||
+        error.message ||
+        'Error during logout.';
       handleError(errorMessage);
     } finally {
       setLogoutLoading(false);
     }
   };
-  
 
   return (
-    <AuthContext.Provider value={{ user, login, signUp, logout }}>
-        <LogoutAnimation isVisible={logoutLoading} />
+    <AuthContext.Provider value={{ user, tasks, loading, login, signUp, logout }}>
       {children}
     </AuthContext.Provider>
   );
