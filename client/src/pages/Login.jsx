@@ -24,7 +24,6 @@ const Login = () => {
 
   const onSubmit = async (data) => {
     setLoading(true);
-    const startTime = Date.now();
     try {
       const success = await login(data.email, data.password);
       if (success) {
