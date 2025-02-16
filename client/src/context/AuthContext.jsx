@@ -149,19 +149,7 @@ const AuthProvider = ({ children }) => {
     }
   };
 
-  // Render a full-page spinner until loading is complete
-  if (loading) {
-    return (
-      <div className="relative w-24 h-24 mx-auto mb-6">
-      {/* Outer spinning ring */}
-      <div className="absolute inset-0 border-4 border-blue-400/20 rounded-full"></div>
-      <div className="absolute inset-0 border-4 border-t-blue-400 rounded-full animate-spin"></div>
-      
-      {/* Inner dot pulse */}
-      <div className="absolute inset-0 m-auto w-4 h-4 bg-blue-400 rounded-full animate-pulse"></div>
-    </div>
-    );
-  }
+
 
   return (
     <AuthContext.Provider value={{ user, tasks, loading, login, signUp, logout }}>
