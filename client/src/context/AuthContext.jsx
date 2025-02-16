@@ -2,7 +2,7 @@
 import React, { createContext, useState, useEffect } from 'react';
 import axios from 'axios';
 import { handleError, handleSuccess } from '../utils/messageHandler';
-import LogoutAnimation from '../assets/logoutAnimation'
+import LogoutAnimation from '../assets/logoutAnimation';
 
 const AuthContext = createContext();
 
@@ -133,9 +133,10 @@ const AuthProvider = ({ children }) => {
         {},
         { withCredentials: true }
       );
+      await new Promise((resolve) => setTimeout(resolve, 2000));
       setUser(null);
       setTasks(null);
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      // Wait a bit for logout animation
       window.location.href = '/';
     } catch (error) {
       const errorMessage =
@@ -147,6 +148,15 @@ const AuthProvider = ({ children }) => {
       setLogoutLoading(false);
     }
   };
+
+  // Render a full-page spinner until loading is complete
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
 
   return (
     <AuthContext.Provider value={{ user, tasks, loading, login, signUp, logout }}>

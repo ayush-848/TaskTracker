@@ -15,7 +15,8 @@ import UserTaskDetails from './pages/UserTaskDetails';
 
 const App = () => {
   return (
-      <Router>
+     <AuthProvider>
+       <Router>
         <ToastContainer/>
         <Routes>
           {/* Routes that don't require auth */}
@@ -32,6 +33,7 @@ const App = () => {
           </Route>
         </Routes>
       </Router>
+     </AuthProvider>
   );
 };
 

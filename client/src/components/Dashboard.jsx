@@ -30,6 +30,7 @@ const Dashboard = () => {
   }
 
   if (!user) {
+    
     return <Navigate to="/login" replace />;
   }
 console.log(pending)

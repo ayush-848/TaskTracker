@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useForm } from "react-hook-form";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { handleError, handleSuccess } from "../utils/messageHandler";
+import { AuthContext } from "../context/AuthContext";
 
 const InputField = ({ register, name, type, placeholder, icon }) => (
   <div className="relative flex items-center mt-4">
@@ -18,24 +18,18 @@ const InputField = ({ register, name, type, placeholder, icon }) => (
 
 const Login = () => {
   const { register, handleSubmit } = useForm();
+  const { login } = useContext(AuthContext);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
   const onSubmit = async (data) => {
     setLoading(true);
+    const startTime = Date.now();
     try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_API_URL}/auth/login`,
-        data,
-        {
-          headers: { "Content-Type": "application/json" },
-          withCredentials: true,
-        }
-      );
-      handleSuccess("Login successful");
-        setTimeout(() => {
-          navigate('/user');
-        }, 1500);
+      const success = await login(data.email, data.password);
+      if (success) {
+          navigate("/user");
+      }
     } catch (error) {
       console.error(
         "Error during login:",
