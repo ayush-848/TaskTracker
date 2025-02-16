@@ -135,4 +135,27 @@ const login = async (req, res) => {
   }
 };
 
-module.exports = { signup,login };
+const logout = async (req, res) => {
+  try {
+    // Clear the jwtToken cookie. Make sure to use the same options as when you set it.
+    res.clearCookie('jwtToken', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production', 
+      sameSite: 'None',
+    });
+    
+    return res.status(200).json({
+      success: true,
+      message: "Logged out successfully",
+    });
+  } catch (error) {
+    console.error("Logout error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error during logout",
+    });
+  }
+};
+
+module.exports = { signup, login, logout };
+

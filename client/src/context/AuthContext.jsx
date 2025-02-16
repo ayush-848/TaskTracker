@@ -2,6 +2,7 @@
 import React, { createContext, useState, useEffect } from 'react';
 import axios from 'axios';
 import { handleError, handleSuccess } from '../utils/messageHandler';
+import LogoutAnimation from '../assets/logoutAnimation'
 
 const AuthContext = createContext();
 
@@ -52,14 +53,12 @@ const AuthProvider = ({ children }) => {
       try {
         const response = await axios.get(
           `${import.meta.env.VITE_API_URL}/api/tasks/user`,
-          {
-            withCredentials: true,
-          }
+          { withCredentials: true }
         );
         // Assume the API returns an object like { success: true, tasks: [...] }
         setTasks(response.data.tasks);
       } catch (err) {
-        console.log('Error fetching tasks');
+        console.error('Error fetching tasks:', err);
         setTasks(null);
       }
     };
@@ -135,7 +134,7 @@ const AuthProvider = ({ children }) => {
         { withCredentials: true }
       );
       setUser(null);
-      // Optional: delay for a smooth transition
+      setTasks(null);
       await new Promise((resolve) => setTimeout(resolve, 2000));
       window.location.href = '/';
     } catch (error) {
@@ -151,6 +150,7 @@ const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider value={{ user, tasks, loading, login, signUp, logout }}>
+      <LogoutAnimation isVisible={logoutLoading} />
       {children}
     </AuthContext.Provider>
   );
