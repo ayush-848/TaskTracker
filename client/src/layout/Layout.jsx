@@ -58,37 +58,37 @@ const Layout = () => {
         {/* Navigation */}
         <nav className="p-2 mt-4">
           <ul className="space-y-1">
-            {navItems.map((item, index) => (
-              <li key={index}>
-                {item.name === 'Sign Out' ? (
-                  <button
-                    onClick={logout}
-                    className="flex items-center w-full px-4 py-2.5 rounded-lg transition-all
-                      text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white
-                      hover:bg-gray-50 dark:hover:bg-gray-800/50 group"
-                  >
-                    <item.icon className="w-5 h-5 mr-3 text-indigo-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400" />
-                    <span className="text-sm font-medium">{item.name}</span>
-                  </button>
-                ) : (
-                  <Link
-                    to={item.path}
-                    className="flex items-center px-4 py-2.5 rounded-lg transition-all
-                      text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white
-                      hover:bg-gray-50 dark:hover:bg-gray-800/50 group"
-                  >
-                    <item.icon className="w-5 h-5 mr-3 text-indigo-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400" />
-                    <span className="text-sm font-medium">{item.name}</span>
-                    {item.badge && (
-                      <span className="ml-auto px-2 text-xs font-medium rounded-full
-                        bg-indigo-200 text-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-200">
-                        {item.badge}
-                      </span>
-                    )}
-                  </Link>
-                )}
-              </li>
-            ))}
+          {navItems.map((item, index) => (
+  <li key={index}>
+    {item.name === 'Sign Out' ? (
+      <button
+        onClick={logout}
+        className="flex items-center w-full px-4 py-2.5 rounded-lg transition-all
+          text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white
+          hover:bg-gray-50 dark:hover:bg-gray-800/50 group"
+      >
+        <item.icon className="w-5 h-5 mr-3 text-indigo-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400" />
+        <span className="text-sm font-medium">{item.name}</span>
+      </button>
+    ) : (
+      <Link
+        to={item.path}
+        className="flex items-center px-4 py-2.5 rounded-lg transition-all
+          text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white
+          hover:bg-gray-50 dark:hover:bg-gray-800/50 group"
+      >
+        <item.icon className="w-5 h-5 mr-3 text-indigo-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400" />
+        <span className="text-sm font-medium">{item.name}</span>
+        {item.badge !== undefined && item.badge !== null && (
+          <span className="ml-auto px-2 text-xs font-medium rounded-full bg-indigo-200 text-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-200">
+            {item.badge}
+          </span>
+        )}
+      </Link>
+    )}
+  </li>
+))}
+
           </ul>
         </nav>
       </div>
