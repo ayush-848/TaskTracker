@@ -25,12 +25,12 @@ const getUserTasks = async (req, res) => {
     const userId = req.user._id;
     const currentDate = new Date();
 
-    // Mark tasks as overdue if dueDate is passed and status is not already 'overdue'
+    // Mark tasks as overdue if dueDate is passed, status is not already 'overdue', and status is not 'completed'
     await Task.updateMany(
       {
         userId: userId,
         dueDate: { $lt: currentDate },
-        status: { $ne: 'overdue' }
+        status: { $nin: ['overdue', 'completed'] }
       },
       { status: 'overdue' }
     );
@@ -50,6 +50,7 @@ const getUserTasks = async (req, res) => {
     });
   }
 };
+
 
 
 const getTaskInfo = async (req, res) => {

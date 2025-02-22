@@ -115,10 +115,28 @@ const TaskDetails = () => {
     setIsEditing(false);
   };
 
+  // Mark task as done: update the task's status to "completed"
+  const markTaskAsDone = async () => {
+    // Optimistically update the local task state
+    const updated = { ...task, status: "completed" };
+    setTask(updated);
+
+    try {
+      const response = await axios.patch(
+        `${import.meta.env.VITE_API_URL}/api/tasks/user/edit/${task._id}`,
+        { status: "completed" },
+        { withCredentials: true }
+      );
+      setTask(response.data.task);
+    } catch (err) {
+      console.error(err);
+      setError('Error marking task as done');
+    }
+  };
+
   if (loading)
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
-        {/* Removed animate-spin class */}
         <div className="rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-600"></div>
       </div>
     );
@@ -132,7 +150,6 @@ const TaskDetails = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center p-6">
-      {/* Removed transition-all duration-300 */}
       <div className="w-full bg-white dark:bg-gray-800 shadow-xl rounded-xl overflow-hidden">
         <div className="p-8 space-y-6">
           {/* Header */}
@@ -201,6 +218,16 @@ const TaskDetails = () => {
                 <span className="capitalize">{task.status}</span>
               </div>
             </div>
+
+            {/* Mark as Done Button */}
+            {task.status !== "completed" && (
+              <button
+                onClick={markTaskAsDone}
+                className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-colors"
+              >
+                Mark as Done
+              </button>
+            )}
           </div>
 
           {/* Description */}
@@ -237,7 +264,7 @@ const TaskDetails = () => {
                     onClick={() => handleToggleSubtask(subtask._id)}
                   >
                     <div
-                      className={`w-5 h-5 flex-shrink-0 rounded-md border-2 flex items-center justify-center ${
+                      className={`w-5 h-5 flex-shrink-0 rounded-md border-2 flex items-center justify-center transition-colors ${
                         subtask.completed
                           ? 'bg-indigo-600 border-indigo-600 dark:bg-indigo-700 dark:border-indigo-700'
                           : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600'
@@ -254,11 +281,11 @@ const TaskDetails = () => {
                       )}
                     </div>
                     <span
-                      className={
+                      className={`transition-colors ${
                         subtask.completed
                           ? 'text-gray-400 dark:text-gray-500 line-through'
                           : 'text-gray-700 dark:text-gray-300'
-                      }
+                      }`}
                     >
                       {subtask.text}
                     </span>
