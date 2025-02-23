@@ -2,22 +2,9 @@ import React, { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
 
-const TaskDetails = () => {
-  const { tasks, loading } = useContext(AuthContext);
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-600"></div>
-      </div>
-    );
-  }
-
-  const allTasks = tasks || [];
-  const tasksList = allTasks.filter(task => task.status != 'completed');
-  
-
-  // Status styles with better contrast
+const CompletedTasks = () => {
+  const { tasks } = useContext(AuthContext);
   const statusStyles = {
     pending: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400 border border-blue-200 dark:border-blue-800',
     overdue: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400 border border-red-200 dark:border-red-800',
@@ -42,26 +29,25 @@ const TaskDetails = () => {
     }
   }
 
-  return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6">
-      <div className="max-w-7xl mx-auto">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-8">
-          Your Tasks
-        </h1>
+  const taskList = tasks || [];
+  const completedTasks=taskList.filter(task=>task.status==='completed')
+  console.log(completedTasks.map(task => task.taskName));
 
-        {tasksList.length === 0 ? (
-          <div className="text-center py-12 rounded-lg bg-white dark:bg-gray-800 shadow-sm border border-gray-200 dark:border-gray-700">
-            <p className="text-gray-600 dark:text-gray-300">
-              No tasks found. Create your first task to get started.
-            </p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-  {tasksList
+  return (
+    <div>
+      {completedTasks.length==0?(
+        <div className="text-center py-12 rounded-lg bg-white dark:bg-gray-800 shadow-sm border border-gray-400 dark:border-gray-700">
+        <p className="text-gray-600 dark:text-gray-300">
+          You haven't completed any task.
+        </p>
+      </div>
+      ):(
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {completedTasks
     .map((task) => (
       <div
         key={task._id}
-        className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6"
+        className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-400 dark:border-gray-700 p-6"
       >
         <div className="flex justify-between items-start mb-4">
           <div>
@@ -129,12 +115,10 @@ const TaskDetails = () => {
         </div>
       </div>
     ))}
-</div>
-
-        )}
-      </div>
+          </div>
+      )}
     </div>
   );
 };
 
-export default TaskDetails;
+export default CompletedTasks;
