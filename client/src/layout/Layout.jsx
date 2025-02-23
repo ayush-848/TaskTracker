@@ -9,7 +9,7 @@ import { AuthContext } from '../context/AuthContext';
 const Layout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [totalCompleted, setTotalCompleted] = useState(0);
-  const { tasks,user, logout } = useContext(AuthContext);
+  const { tasks,user, logout,userInitials } = useContext(AuthContext);
 
   useEffect(() => {
     if (tasks) {
@@ -26,22 +26,6 @@ const Layout = () => {
     { name: 'Sign Out', path: '/logout', icon: LogOut },
   ];
 
-  if (!user) {
-    return <div>Loading...</div>;
-  }
-
-  const userName =
-  user.username != null
-    ? (() => {
-        const words = user.username.split(" ");
-        return words.length > 1 
-          ? words[0].charAt(0) + words[1].charAt(0)
-          : user.username.substring(0, 2);
-      })()
-    : "";
-
-  
- 
 
   return (
     <div className="min-h-screen flex bg-gray-300 dark:bg-gray-950 relative">
@@ -135,7 +119,7 @@ const Layout = () => {
               <Link to="/user/profile">
   <div className="w-8 h-8 bg-indigo-100 dark:bg-indigo-800 rounded-full flex items-center justify-center shadow-md cursor-pointer">
     <span className="text-indigo-700 dark:text-indigo-300 font-medium">
-      {userName}
+      {userInitials}
     </span>
   </div>
 </Link>

@@ -66,6 +66,16 @@ const AuthProvider = ({ children }) => {
     fetchTasks();
   }, [user]);
 
+  const userInitials =
+  user?.username != null
+    ? (() => {
+        const words = user.username.split(" ");
+        return words.length > 1 
+          ? words[0].charAt(0) + words[1].charAt(0)
+          : user.username.substring(0, 2);
+      })()
+    : "";
+
   const login = async (email, password) => {
     try {
       const response = await axios.post(
@@ -152,7 +162,7 @@ const AuthProvider = ({ children }) => {
 
 
   return (
-    <AuthContext.Provider value={{ user, tasks, loading, login, signUp, logout }}>
+    <AuthContext.Provider value={{ user, tasks, loading,userInitials, login, signUp, logout }}>
       <LogoutAnimation isVisible={logoutLoading} />
       {children}
     </AuthContext.Provider>
