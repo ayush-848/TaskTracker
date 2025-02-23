@@ -1,10 +1,20 @@
 import React, { useState, useContext } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { handleError, handleSuccess } from "../utils/messageHandler";
+import { handleError } from "../utils/messageHandler";
 import { AuthContext } from "../context/AuthContext";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 
-const InputField = ({ register, name, type, placeholder, icon }) => (
+const InputField = ({
+  register,
+  name,
+  type,
+  placeholder,
+  icon,
+  toggleVisibility,
+  showIcon,
+}) => (
   <div className="relative flex items-center mt-4">
     <span className="absolute left-3 text-gray-400">{icon}</span>
     <input
@@ -13,6 +23,15 @@ const InputField = ({ register, name, type, placeholder, icon }) => (
       className="block w-full px-10 py-3 text-gray-700 bg-white border rounded-lg dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring focus:ring-blue-300"
       placeholder={placeholder}
     />
+    {toggleVisibility && (
+      <button
+        type="button"
+        onClick={toggleVisibility}
+        className="absolute right-3 text-gray-400 focus:outline-none"
+      >
+        <FontAwesomeIcon icon={showIcon ? faEye : faEyeSlash} />
+      </button>
+    )}
   </div>
 );
 
@@ -21,13 +40,15 @@ const Login = () => {
   const { login } = useContext(AuthContext);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  // State to manage password visibility
+  const [showPassword, setShowPassword] = useState(false);
 
   const onSubmit = async (data) => {
     setLoading(true);
     try {
       const success = await login(data.email, data.password);
       if (success) {
-          navigate("/user");
+        navigate("/user");
       }
     } catch (error) {
       console.error(
@@ -79,7 +100,7 @@ const Login = () => {
         <InputField
           register={register}
           name="password"
-          type="password"
+          type={showPassword ? "text" : "password"}
           placeholder="Password"
           icon={
             <svg
@@ -96,6 +117,8 @@ const Login = () => {
               />
             </svg>
           }
+          toggleVisibility={() => setShowPassword((prev) => !prev)}
+          showIcon={showPassword}
         />
 
         <button

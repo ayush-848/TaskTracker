@@ -9,7 +9,7 @@ import { AuthContext } from '../context/AuthContext';
 const Layout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [totalCompleted, setTotalCompleted] = useState(0);
-  const { tasks, logout } = useContext(AuthContext);
+  const { tasks,user, logout } = useContext(AuthContext);
 
   useEffect(() => {
     if (tasks) {
@@ -26,6 +26,21 @@ const Layout = () => {
     { name: 'Sign Out', path: '/logout', icon: LogOut },
   ];
 
+  if (!user) {
+    return <div>Loading...</div>;
+  }
+
+  const userName =
+  user.username != null
+    ? (() => {
+        const words = user.username.split(" ");
+        return words.length > 1 
+          ? words[0].charAt(0) + words[1].charAt(0)
+          : user.username.substring(0, 2);
+      })()
+    : "";
+
+  
  
 
   return (
@@ -107,7 +122,7 @@ const Layout = () => {
             </svg>
           </button>
           <div className="flex items-center flex-1 space-x-4">
-            <h1 className="text-lg font-semibold text-gray-900 dark:text-white">Analytics Dashboard</h1>
+            <h1 className="text-xl font-semibold text-gray-900 dark:text-white">Analytics Dashboard</h1>
           </div>
           <div className="flex items-center space-x-5">
             <button className="relative p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800">
@@ -117,9 +132,13 @@ const Layout = () => {
             <ThemeToggle />
             <div className="flex items-center space-x-3">
               <div className="relative">
-                <div className="w-8 h-8 bg-indigo-100 dark:bg-indigo-900/30 rounded-full flex items-center justify-center">
-                  <User className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
-                </div>
+              <Link to="/user/profile">
+  <div className="w-8 h-8 bg-indigo-100 dark:bg-indigo-800 rounded-full flex items-center justify-center shadow-md cursor-pointer">
+    <span className="text-indigo-700 dark:text-indigo-300 font-medium">
+      {userName}
+    </span>
+  </div>
+</Link>
                 <span className="absolute bottom-0 right-0 w-2 h-2 bg-green-500 rounded-full ring-2 ring-white dark:ring-gray-950" />
               </div>
             </div>

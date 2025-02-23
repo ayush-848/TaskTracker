@@ -1,11 +1,21 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useSearchParams } from "react-router-dom";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { handleError, handleSuccess } from "../utils/messageHandler";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 
-const InputField = ({ register, name, type, placeholder, icon }) => (
+const InputField = ({
+  register,
+  name,
+  type,
+  placeholder,
+  icon,
+  toggleVisibility,
+  showIcon,
+}) => (
   <div className="relative flex items-center mt-4">
     <span className="absolute left-3 text-gray-400">{icon}</span>
     <input
@@ -14,6 +24,15 @@ const InputField = ({ register, name, type, placeholder, icon }) => (
       className="block w-full px-10 py-3 text-gray-700 bg-white border rounded-lg dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring focus:ring-blue-300"
       placeholder={placeholder}
     />
+    {toggleVisibility && (
+      <button
+        type="button"
+        onClick={toggleVisibility}
+        className="absolute right-3 text-gray-400 focus:outline-none"
+      >
+        <FontAwesomeIcon icon={showIcon ? faEye : faEyeSlash} />
+      </button>
+    )}
   </div>
 );
 
@@ -22,6 +41,10 @@ const SignUp = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const emailFromQuery = searchParams.get("email") || "";
+
+  // State to manage password visibility
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   useEffect(() => {
     if (emailFromQuery) {
@@ -44,7 +67,7 @@ const SignUp = () => {
 
       handleSuccess("Account created successfully!");
       setTimeout(() => {
-        navigate('/login');
+        navigate("/login");
       }, 1500);
     } catch (error) {
       console.error("Error during registration:", error);
@@ -113,7 +136,7 @@ const SignUp = () => {
         <InputField
           register={register}
           name="password"
-          type="password"
+          type={showPassword ? "text" : "password"}
           placeholder="Password"
           icon={
             <svg
@@ -130,12 +153,14 @@ const SignUp = () => {
               />
             </svg>
           }
+          toggleVisibility={() => setShowPassword((prev) => !prev)}
+          showIcon={showPassword}
         />
 
         <InputField
           register={register}
           name="confirmPassword"
-          type="password"
+          type={showConfirmPassword ? "text" : "password"}
           placeholder="Confirm Password"
           icon={
             <svg
@@ -152,6 +177,8 @@ const SignUp = () => {
               />
             </svg>
           }
+          toggleVisibility={() => setShowConfirmPassword((prev) => !prev)}
+          showIcon={showConfirmPassword}
         />
 
         <button
