@@ -129,7 +129,7 @@ const Login = () => {
           {loading ? "Logging In..." : "Log In"}
         </button>
 
-        <p className="text-center text-sm">
+        <p className="text-center text-sm text-white">
           Don't have an account?{" "}
           <a href="/signup" className="text-blue-500 hover:underline">
             Sign Up

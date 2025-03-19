@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
+import { useParams,useNavigate } from 'react-router-dom';
+
 
 const TaskDetails = () => {
   const { id } = useParams(); // Task ID from URL
@@ -128,6 +129,7 @@ const TaskDetails = () => {
         { withCredentials: true }
       );
       setTask(response.data.task);
+      window.location.reload();
     } catch (err) {
       console.error(err);
       setError('Error marking task as done');
