@@ -12,6 +12,7 @@ import './App.css';
 import { ToastContainer } from 'react-toastify';
 import UserTaskDetails from './pages/UserTaskDetails';
 import CompletedTasks from './pages/CompletedTasks';
+import Profile from './pages/Profile';
 
 
 const App = () => {
@@ -31,6 +32,7 @@ const App = () => {
             <Route path="add-task" element={<AddTask />} />
           <Route path="tasks/:id" element={<UserTaskDetails/>}/>
           <Route path="completed-tasks" element={<CompletedTasks/>} />
+          <Route path="profile" element={<Profile/>} />
             <Route path="*" element={<>Page Does not exist</>} />
           </Route>
         </Routes>

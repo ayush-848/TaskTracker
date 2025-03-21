@@ -106,7 +106,7 @@ const Layout = () => {
             </svg>
           </button>
           <div className="flex items-center flex-1 space-x-4">
-            <h1 className="text-xl font-semibold text-gray-900 dark:text-white">Analytics Dashboard</h1>
+            <h1 className="text-xl font-semibold text-gray-900 dark:text-white">Dashboard</h1>
           </div>
           <div className="flex items-center space-x-5">
             <button className="relative p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800">

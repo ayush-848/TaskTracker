@@ -4,10 +4,9 @@ import { useParams,useNavigate } from 'react-router-dom';
 
 
 const TaskDetails = () => {
-  const { id } = useParams(); // Task ID from URL
+  const { id } = useParams();
   const [task, setTask] = useState(null);
   const [updatedTask, setUpdatedTask] = useState({});
-  // newPriority holds the alternative priority selected by the user (if any)
   const [newPriority, setNewPriority] = useState('');
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(true);
