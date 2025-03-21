@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams,useNavigate } from 'react-router-dom';
+import Breadcrumbs from '../components/BreadCrumbs';
 
 
 const TaskDetails = () => {
@@ -150,9 +151,10 @@ const TaskDetails = () => {
     );
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center p-6">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 ">
       <div className="w-full bg-white dark:bg-gray-800 shadow-xl rounded-xl overflow-hidden">
         <div className="p-8 space-y-6">
+      <Breadcrumbs/>
           {/* Header */}
           <div className="space-y-4 border-b border-gray-200 dark:border-gray-700 pb-6">
             {isEditing ? (

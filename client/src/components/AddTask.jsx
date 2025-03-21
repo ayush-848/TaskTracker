@@ -6,26 +6,34 @@ import BreadCrumbs from './BreadCrumbs';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
+// 1) Import icons from react-icons/fa
+import {
+  FaTasks,
+  FaRegStickyNote,
+  FaCalendarAlt,
+  FaExclamationCircle,
+  FaFolderOpen,
+  FaListUl,
+} from 'react-icons/fa';
 
 const AddTask = () => {
-  // Set default values for category and priority
   const { register, handleSubmit, formState: { errors } } = useForm({
     defaultValues: {
       category: 'personal',
       priority: 'low',
     },
   });
+
   const [dueDate, setDueDate] = useState(null);
-  // subtasks can be empty; we store them as an array of objects
   const [subtasks, setSubtasks] = useState([{ text: '' }]);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
-  const navigate=useNavigate()
+  const navigate = useNavigate();
 
   const onSubmit = async (data) => {
     const preparedSubtasks = subtasks
-      .filter(subtask => subtask.text.trim() !== '')
-      .map(subtask => ({ text: subtask.text, completed: false }));
+      .filter((subtask) => subtask.text.trim() !== '')
+      .map((subtask) => ({ text: subtask.text, completed: false }));
 
     const payload = {
       taskName: data.taskName,
@@ -39,24 +47,24 @@ const AddTask = () => {
 
     setLoading(true);
     setMessage("");
-    
+
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_API_URL}/api/create-task`,
         payload,
-        { 
-          withCredentials: true, // This is crucial for cookies
+        {
+          withCredentials: true,
           headers: {
             'Content-Type': 'application/json',
           },
-         }
+        }
       );
-      
+
       setMessage("Task created successfully!");
-      if(response.data.success){
+      if (response.data.success) {
         setTimeout(() => {
-          navigate('/user');
-        }, 1500);
+          window.location.href = '/user';
+        }, 1000);
       }
       setDueDate(null);
       setSubtasks([{ text: '' }]);
@@ -77,43 +85,50 @@ const AddTask = () => {
   };
 
   return (
-    <div className="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow-sm border border-gray-300">
+    <div className="max-w-2xl mx-auto bg-white dark:bg-gray-900 p-8 rounded-lg shadow-sm border border-gray-300 dark:border-gray-700">
       <BreadCrumbs />
-      <h2 className="text-2xl font-bold text-gray-800 mb-6">Add New Task</h2>
-      
+      <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-6">
+        Add New Task
+      </h2>
+
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         {/* Task Name */}
         <div>
-          <label className="block text-sm font-medium text-gray-800 mb-1">
+          <label className="block text-sm font-medium text-gray-800 dark:text-gray-300 mb-1">
+            <FaTasks className="inline-block mr-2 text-indigo-500" />
             Task Name <span className="text-red-600">*</span>
           </label>
           <input
             {...register('taskName', { required: true })}
-            className={`w-full px-4 py-2 rounded-lg border ${
-              errors.taskName ? 'border-red-500' : 'border-gray-400'
-            } focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
+            className={`w-full px-4 py-2 rounded-lg border
+              ${errors.taskName ? 'border-red-500' : 'border-gray-400 dark:border-gray-600'}
+              bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200
+              focus:ring-2 focus:ring-indigo-500 focus:border-transparent`}
           />
           {errors.taskName && (
             <span className="text-sm text-red-500">Task name is required</span>
           )}
         </div>
 
-        {/* Description (optional) */}
+        {/* Description */}
         <div>
-          <label className="block text-sm font-medium text-gray-800 mb-1">
-            Description
+          <label className="block text-sm font-medium text-gray-800 dark:text-gray-300 mb-1">
+            <FaRegStickyNote className="inline-block mr-2 text-indigo-500" />
+            Description <span className="text-red-600">*</span>
           </label>
           <textarea
-            {...register('description')}
+            {...register('description', { required: true })}
             rows="3"
-            className="w-full px-4 py-2 rounded-lg border border-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder="Enter task description (optional)"
+            className="w-full px-4 py-2 rounded-lg border border-gray-400 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200
+              focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+            placeholder="Enter task description"
           />
         </div>
 
         {/* Due Date */}
         <div>
-          <label className="block text-sm font-medium text-gray-800 mb-1">
+          <label className="block text-sm font-medium text-gray-800 dark:text-gray-300 mb-1">
+            <FaCalendarAlt className="inline-block mr-2 text-indigo-500" />
             Due Date <span className="text-red-600">*</span>
           </label>
           <DatePicker
@@ -122,19 +137,22 @@ const AddTask = () => {
             onChange={(date) => setDueDate(date)}
             minDate={new Date()}
             dateFormat="MMMM d, yyyy"
-            className="w-full px-4 py-2 rounded-lg border border-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-4 py-2 rounded-lg border border-gray-400 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200
+              focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
             placeholderText="Select due date"
           />
         </div>
 
-        {/* Priority (default low) */}
+        {/* Priority */}
         <div>
-          <label className="block text-sm font-medium text-gray-800 mb-1">
-            Priority <span className="text-gray-400">(default low)</span>
+          <label className="block text-sm font-medium text-gray-800 dark:text-gray-300 mb-1">
+            <FaExclamationCircle className="inline-block mr-2 text-indigo-500" />
+            Priority
           </label>
           <select
             {...register('priority')}
-            className="w-full px-4 py-2 rounded-lg border border-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-4 py-2 rounded-lg border border-gray-400 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200
+              focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
           >
             <option value="low">Low</option>
             <option value="medium">Medium</option>
@@ -142,14 +160,16 @@ const AddTask = () => {
           </select>
         </div>
 
-        {/* Category (default personal) */}
+        {/* Category */}
         <div>
-          <label className="block text-sm font-medium text-gray-800 mb-1">
-            Category <span className="text-gray-400">(default personal)</span>
+          <label className="block text-sm font-medium text-gray-800 dark:text-gray-300 mb-1">
+            <FaFolderOpen className="inline-block mr-2 text-indigo-500" />
+            Category
           </label>
           <select
             {...register('category')}
-            className="w-full px-4 py-2 rounded-lg border border-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-4 py-2 rounded-lg border border-gray-400 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200
+              focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
           >
             <option value="personal">Personal</option>
             <option value="work">Work</option>
@@ -158,10 +178,11 @@ const AddTask = () => {
           </select>
         </div>
 
-        {/* Subtasks (optional) */}
+        {/* Subtasks */}
         <div>
-          <label className="block text-sm font-medium text-gray-800 mb-2">
-            Subtasks (optional)
+          <label className="block text-sm font-medium text-gray-800 dark:text-gray-300 mb-2">
+            <FaListUl className="inline-block mr-2 text-indigo-500" />
+            Subtasks
           </label>
           {subtasks.map((subtask, index) => (
             <div key={index} className="flex gap-2 mb-2">
@@ -172,14 +193,15 @@ const AddTask = () => {
                   newSubtasks[index].text = e.target.value;
                   setSubtasks(newSubtasks);
                 }}
-                className="flex-1 px-4 py-2 rounded-lg border border-gray-400"
+                className="flex-1 px-4 py-2 rounded-lg border border-gray-400 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200
+                  focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                 placeholder={`Subtask ${index + 1}`}
               />
               {subtasks.length > 1 && (
                 <button
                   type="button"
                   onClick={() => removeSubtask(index)}
-                  className="px-3 text-red-500 hover:text-red-700"
+                  className="text-red-500 dark:text-red-400 hover:text-red-700"
                 >
                   ×
                 </button>
@@ -189,27 +211,30 @@ const AddTask = () => {
           <button
             type="button"
             onClick={addSubtask}
-            className="text-sm text-blue-600 hover:text-blue-700 flex items-center"
+            className="text-indigo-500 dark:text-indigo-400 hover:underline mt-2"
           >
-            <span className="mr-1">+</span> Add Subtask
+            + Add Another Subtask
           </button>
         </div>
 
-        {/* Message */}
-        {message && (
-          <div className="text-center text-sm text-green-600">
-            {message}
-          </div>
-        )}
-
+        {/* Submit Button */}
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+          // Updated button colors to use indigo
+          className="w-full bg-indigo-500 dark:bg-indigo-600 text-white py-2 px-4 rounded-lg
+            hover:bg-indigo-600 dark:hover:bg-indigo-700 transition-colors"
         >
           {loading ? "Creating Task..." : "Create Task"}
         </button>
       </form>
+
+      {/* Optional success/error message */}
+      {message && (
+        <p className="mt-4 text-center text-sm text-gray-800 dark:text-gray-200">
+          {message}
+        </p>
+      )}
     </div>
   );
 };

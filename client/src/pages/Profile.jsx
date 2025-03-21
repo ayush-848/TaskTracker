@@ -1,6 +1,7 @@
 import React, { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { FaUser, FaEnvelope, FaCalendarAlt } from "react-icons/fa";
+import BreadCrumbs from "../components/BreadCrumbs"
 
 const Profile = () => {
   const { user } = useContext(AuthContext);
@@ -26,7 +27,8 @@ const Profile = () => {
 
   return (
     <div className="p-6 bg-gray-100 dark:bg-gray-900 flex justify-center">
-      <div className="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6 w-full max-w-lg border border-gray-300 dark:border-gray-700">
+      <div className="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-10 w-full max-w-lg border border-gray-300 dark:border-gray-700">
+        <BreadCrumbs/>
         <h1 className="text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-6">
           Profile Information
         </h1>

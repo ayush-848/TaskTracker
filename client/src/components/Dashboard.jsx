@@ -93,7 +93,7 @@ console.log(pending)
       </div>
 
       {/* Welcome Card */}
-      <div className="bg-gray-200 dark:bg-gray-800 p-8 rounded-2xl border border-gray-100 dark:border-gray-700 relative">
+      <div className="bg-gray-100 dark:bg-gray-800 p-8 rounded-2xl border border-gray-100 dark:border-gray-700 relative">
         <div className="max-w-2xl">
           <div className="absolute top-0 left-0 w-full h-1" />
           <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
