@@ -5,6 +5,7 @@ const connectDB=require('./config/connectDB')
 const cors=require('cors')
 const authRoutes=require('./routes/authRoutes')
 const userRoutes=require('./routes/userRoutes')
+const roomRoutes=require('./routes/roomRoutes')
 const authenticated=require('./middlewares/authenticated')
 const User=require('./models/userModal')
 
@@ -49,6 +50,7 @@ app.get('/protected', authenticated, async (req, res) => {
 
 app.use("/auth", authRoutes);
 app.use("/api", userRoutes);
+app.use("/rooms", roomRoutes)
 
 
 app.listen(port, () => {

@@ -18,10 +18,8 @@ const checkFormat = (username, email, password) => {
 const signup = async (req, res) => {
   try {
     const { username, email, password, confirmPassword } = req.body;
-    // Validate required fields and format (throw an error if invalid)
     checkFormat(username, email, password);
 
-    // Check if the user already exists by email or username
     const existingEmail = await User.findOne({ email });
     const existingUsername = await User.findOne({ username });
     if (existingEmail || existingUsername) {
@@ -137,7 +135,6 @@ const login = async (req, res) => {
 
 const logout = async (req, res) => {
   try {
-    // Clear the jwtToken cookie. Make sure to use the same options as when you set it.
     res.clearCookie('jwtToken', {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production', 
